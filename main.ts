@@ -1,20 +1,4 @@
-// MakeCode Minecraft 타입 선언 (로컬 IDE용 — MakeCode 에디터에서는 자동 제공됨)
-declare const enum AgentDetection { Block = 0, Redstone = 1 }
-declare const enum SixDirection { Forward = 0, Back = 1, Left = 2, Right = 3, Up = 4, Down = 5 }
-declare namespace agent {
-    function detect(type: AgentDetection, direction: SixDirection): boolean
-    function move(direction: SixDirection, distance: number): void
-    function turn(direction: number): void
-}
-declare namespace player {
-    function execute(command: string): void
-    function onChat(command: string, handler: () => void): void
-    function say(message: string): void
-}
-declare namespace loops {
-    function pause(ms: number): void
-}
-
+// @ts-nocheck
 //% color=#1E90FF weight=100 icon="\uf544"
 //% block="AI"
 namespace ai {
