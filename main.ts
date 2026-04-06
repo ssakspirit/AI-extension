@@ -1,72 +1,87 @@
+// MakeCode Minecraft 타입 선언 (로컬 IDE용 — MakeCode 에디터에서는 자동 제공됨)
+declare const enum AgentDetection { Block = 0, Redstone = 1 }
+declare const enum SixDirection { Forward = 0, Back = 1, Left = 2, Right = 3, Up = 4, Down = 5 }
+declare namespace agent {
+    function detect(type: AgentDetection, direction: SixDirection): boolean
+    function move(direction: SixDirection, distance: number): void
+    function turn(direction: number): void
+}
+declare namespace player {
+    function execute(command: string): void
+    function onChat(command: string, handler: () => void): void
+    function say(message: string): void
+}
+declare namespace loops {
+    function pause(ms: number): void
+}
+
 //% color=#1E90FF weight=100 icon="\uf544"
 //% block="AI"
 namespace ai {
 
-    // 동물 타입 목록
-    const ANIMAL_TYPES = [
-        "cow", "pig", "sheep", "chicken", "horse", "donkey",
-        "rabbit", "wolf", "cat", "parrot", "turtle", "dolphin",
-        "panda", "fox", "bee", "goat", "axolotl", "frog",
-        "strider", "mooshroom", "squid", "bat"
-    ]
+    // 스캔 결과를 저장하는 전역 변수
+    let _detectedEntity = "없음"
 
-    // 몬스터 타입 목록
-    const MONSTER_TYPES = [
-        "zombie", "skeleton", "creeper", "spider", "cave_spider",
-        "enderman", "witch", "blaze", "ghast", "slime",
-        "magma_cube", "husk", "stray", "drowned", "phantom",
-        "pillager", "ravager", "vindicator", "warden", "hoglin"
-    ]
+    // onChat 리스너 등록 — 프로그램 시작 시 한 번만 실행됨
+    player.onChat("__ai_player__", function () {
+        _detectedEntity = "플레이어"
+    })
+    player.onChat("__ai_monster__", function () {
+        _detectedEntity = "몬스터"
+    })
+    player.onChat("__ai_animal__", function () {
+        _detectedEntity = "동물"
+    })
 
     /**
-     * 에이전트 앞에 있는 엔티티의 타입을 반환합니다.
-     * 반환값: 플레이어 이름 / "동물" / "몬스터" / "아이템" / "없음"
+     * 에이전트 앞에 블록이 있는지 확인합니다.
      */
-    //% blockId=ai_detect_entity_type_front
-    //% block="에이전트 앞 엔티티 타입"
+    //% blockId=ai_detect_block_front
+    //% block="에이전트 앞에 블록 감지"
     //% weight=200
-    export function detectEntityTypeFront(): string {
-        // 1단계: 에이전트 앞에 엔티티가 있는지 확인
-        let hasObstacle = agent.detect(AgentDetection.Obstacle, SixDirection.Forward)
-        let hasBlock = agent.detect(AgentDetection.Block, SixDirection.Forward)
+    export function detectBlockFront(): boolean {
+        return agent.detect(AgentDetection.Block, SixDirection.Forward)
+    }
 
-        if (!hasObstacle || hasBlock) {
-            return "없음"
+    /**
+     * 에이전트 주변(반경 3칸)의 엔티티를 스캔합니다.
+     * 스캔 후 '감지된 엔티티' 블록으로 결과를 읽으세요.
+     * 우선순위: 플레이어 > 몬스터 > 동물
+     */
+    //% blockId=ai_scan_entity
+    //% block="에이전트 주변 엔티티 스캔"
+    //% weight=190
+    export function scanEntity(): void {
+        _detectedEntity = "없음"
+
+        // 플레이어 감지
+        player.execute("execute @a[r=3] ~~~ say __ai_player__")
+
+        // 몬스터 감지 (플레이어가 없을 때만 의미 있음)
+        const monsters = ["zombie", "skeleton", "creeper", "spider", "enderman", "witch", "husk", "stray", "drowned", "phantom"]
+        for (let i = 0; i < monsters.length; i++) {
+            player.execute("execute @e[type=" + monsters[i] + ",r=3] ~~~ say __ai_monster__")
         }
 
-        // 2단계: 플레이어 감지
-        let playerResult = gameplay.executeCommand("testfor @a[r=2]")
-        if (playerResult && playerResult.indexOf("Found") >= 0) {
-            let parts = playerResult.split(": ")
-            if (parts.length > 1) {
-                return parts[parts.length - 1].trim()
-            }
-            return "Player"
+        // 동물 감지
+        const animals = ["cow", "pig", "sheep", "chicken", "horse", "rabbit", "wolf", "cat"]
+        for (let i = 0; i < animals.length; i++) {
+            player.execute("execute @e[type=" + animals[i] + ",r=3] ~~~ say __ai_animal__")
         }
 
-        // 3단계: 아이템(드롭 아이템) 감지
-        let itemResult = gameplay.executeCommand("testfor @e[type=item,r=2]")
-        if (itemResult && itemResult.indexOf("Found") >= 0) {
-            return "아이템"
-        }
+        // 명령어 결과가 onChat에 전달될 때까지 잠시 대기
+        loops.pause(500)
+    }
 
-        // 4단계: 동물 감지
-        for (let i = 0; i < ANIMAL_TYPES.length; i++) {
-            let animalResult = gameplay.executeCommand("testfor @e[type=" + ANIMAL_TYPES[i] + ",r=2]")
-            if (animalResult && animalResult.indexOf("Found") >= 0) {
-                return "동물"
-            }
-        }
-
-        // 5단계: 몬스터 감지
-        for (let i = 0; i < MONSTER_TYPES.length; i++) {
-            let monsterResult = gameplay.executeCommand("testfor @e[type=" + MONSTER_TYPES[i] + ",r=2]")
-            if (monsterResult && monsterResult.indexOf("Found") >= 0) {
-                return "몬스터"
-            }
-        }
-
-        return "알 수 없음"
+    /**
+     * 마지막 스캔에서 감지된 엔티티 타입을 반환합니다.
+     * 반환값: "플레이어" / "몬스터" / "동물" / "없음"
+     */
+    //% blockId=ai_last_detected_entity
+    //% block="감지된 엔티티"
+    //% weight=180
+    export function lastDetectedEntity(): string {
+        return _detectedEntity
     }
 
 }
