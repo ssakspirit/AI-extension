@@ -1,0 +1,23 @@
+{
+    "name": "ai",
+    "version": "0.1.0",
+    "description": "마인크래프트 에이전트를 활용한 AI 개념 체험 확장. 엔티티 감지, 주변 탐색 등 AI 동작을 연출합니다.",
+    "license": "MIT",
+    "dependencies": {
+        "core": "*",
+        "builder": "*"
+    },
+    "files": [
+        "main.ts",
+        "README.md"
+    ],
+    "public": true,
+    "targetVersions": {
+        "target": "1.7.25",
+        "targetId": "minecraft"
+    },
+    "supportedTargets": [
+        "minecraft"
+    ],
+    "preferredEditor": "blocksprj"
+}
