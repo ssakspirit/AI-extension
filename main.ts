@@ -32,6 +32,16 @@ namespace ai {
      * 에이전트 자신은 제외됩니다.
      * 반환값 예시: "lees", "lees, Zombie", "없음"
      */
+    /**
+     * TargetSelector를 텍스트로 변환합니다.
+     */
+    //% blockId=ai_selector_to_text
+    //% block="$sel 텍스트로 변환"
+    //% weight=190
+    export function selectorToText(sel: TargetSelector): string {
+        return "" + sel
+    }
+
     //% blockId=ai_scan_near
     //% block="$scanCenter 주변 반경 $radius 칸에서 $scanTarget 최대 $count 개 감지"
     //% radius.defl=3 radius.min=1 radius.max=10
