@@ -4,6 +4,16 @@
 namespace ai {
 
     /**
+     * 감지 기준 위치
+     */
+    export const enum ScanCenter {
+        //% block="에이전트"
+        Agent = 0,
+        //% block="플레이어"
+        Player = 1
+    }
+
+    /**
      * 감지할 대상 종류
      */
     export const enum ScanTarget {
@@ -22,15 +32,16 @@ namespace ai {
      * 에이전트 자신은 제외됩니다.
      * 반환값 예시: "lees", "lees, Zombie", "없음"
      */
-    //% blockId=ai_scan_near_agent
-    //% block="에이전트 주변 반경 $radius 칸에서 $scanTarget 최대 $count 개 감지"
+    //% blockId=ai_scan_near
+    //% block="$scanCenter 주변 반경 $radius 칸에서 $scanTarget 최대 $count 개 감지"
     //% radius.defl=3 radius.min=1 radius.max=10
     //% count.defl=1 count.min=1 count.max=10
     //% weight=200
-    export function scanNearAgent(scanTarget: ScanTarget, radius: number, count: number): TargetSelector {
-        let sel = mobs.near(mobs.target(ALL_ENTITIES), agent.getPosition(), radius)
+    export function scanNear(scanCenter: ScanCenter, scanTarget: ScanTarget, radius: number, count: number): TargetSelector {
+        let pos = scanCenter == ScanCenter.Player ? player.position() : agent.getPosition()
+        let sel = mobs.near(mobs.target(ALL_ENTITIES), pos, radius)
         if (scanTarget == ScanTarget.Player) {
-            sel = mobs.near(mobs.target(ALL_PLAYERS), agent.getPosition(), radius)
+            sel = mobs.near(mobs.target(ALL_PLAYERS), pos, radius)
         } else if (scanTarget == ScanTarget.Monster) {
             sel.addRule("family", "monster")
         } else if (scanTarget == ScanTarget.Mob) {
