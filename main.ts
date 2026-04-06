@@ -42,6 +42,26 @@ namespace ai {
         return "" + sel
     }
 
+    /**
+     * 특정 이름의 엔티티가 특정 아이템을 소지하고 있는지 확인합니다.
+     * itemId 예시: "diamond", "iron_sword", "bow"
+     */
+    //% blockId=ai_entity_has_item
+    //% block="$scanCenter 주변 반경 $radius 칸에서 $name 이(가) $itemId 소지"
+    //% radius.defl=3 radius.min=1 radius.max=10
+    //% weight=185
+    export function entityHasItem(scanCenter: ScanCenter, name: string, radius: number, itemId: string): boolean {
+        // 신호 블록 초기화
+        player.execute("setblock 1000 5 1000 air 0 destroy")
+        // 에이전트 또는 플레이어 기준으로 체크
+        if (scanCenter == ScanCenter.Agent) {
+            player.execute("execute @e[type=agent] ~~~ execute @e[name=" + name + ",r=" + radius + ",hasitem={item=" + itemId + "}] ~~~ setblock 1000 5 1000 stone")
+        } else {
+            player.execute("execute @e[name=" + name + ",r=" + radius + ",hasitem={item=" + itemId + "}] ~~~ setblock 1000 5 1000 stone")
+        }
+        return blocks.testForBlock(Block.Stone, world(1000, 5, 1000))
+    }
+
     //% blockId=ai_scan_near
     //% block="$scanCenter 주변 반경 $radius 칸에서 $scanTarget 최대 $count 개 감지"
     //% radius.defl=3 radius.min=1 radius.max=10
