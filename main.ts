@@ -23,10 +23,11 @@ namespace ai {
      * 반환값 예시: "lees", "lees, Zombie", "없음"
      */
     //% blockId=ai_scan_near_agent
-    //% block="에이전트 주변 반경 $radius 칸에서 $scanTarget 감지"
+    //% block="에이전트 주변 반경 $radius 칸에서 $scanTarget 최대 $count 개 감지"
     //% radius.defl=3 radius.min=1 radius.max=10
+    //% count.defl=1 count.min=1 count.max=10
     //% weight=200
-    export function scanNearAgent(scanTarget: ScanTarget, radius: number): string {
+    export function scanNearAgent(scanTarget: ScanTarget, radius: number, count: number): string {
         let sel = mobs.near(mobs.target(ALL_ENTITIES), agent.getPosition(), radius)
         if (scanTarget == ScanTarget.Player) {
             sel = mobs.near(mobs.target(ALL_PLAYERS), agent.getPosition(), radius)
@@ -35,7 +36,7 @@ namespace ai {
         } else if (scanTarget == ScanTarget.Mob) {
             sel.addRule("family", "mob")
         }
-        sel.addRule("c", "10")
+        sel.addRule("c", "" + count)
         let raw = "" + sel
         let parts = raw.split(", ")
         let results: string[] = []
