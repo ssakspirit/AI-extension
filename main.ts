@@ -14,6 +14,31 @@ namespace ai {
     }
 
     /**
+     * 기본 대상 선택자 (@a, @r, @p)
+     */
+    export const enum BasicTarget {
+        //% block="@a 모든 플레이어"
+        AllPlayers = 0,
+        //% block="@r 임의 플레이어"
+        RandomPlayer = 1,
+        //% block="@p 가장 가까운 플레이어"
+        NearestPlayer = 2
+    }
+
+    /**
+     * 기본 대상 선택자를 반환합니다. (@a, @r, @p)
+     * entityHasItem의 대상 입력으로 사용하거나, 다른 TargetSelector 블록으로 교체할 수 있습니다.
+     */
+    //% blockId=ai_basic_target
+    //% block="$t"
+    //% weight=175
+    export function basicTarget(t: BasicTarget): TargetSelector {
+        if (t == BasicTarget.RandomPlayer) return mobs.target(RANDOM_PLAYER)
+        if (t == BasicTarget.NearestPlayer) return mobs.target(NEAREST_PLAYER)
+        return mobs.target(ALL_PLAYERS)
+    }
+
+    /**
      * 감지할 대상 종류
      */
     export const enum ScanTarget {
@@ -43,22 +68,17 @@ namespace ai {
     }
 
     /**
-     * 특정 이름의 엔티티가 특정 아이템을 소지하고 있는지 확인합니다.
+     * 대상이 특정 아이템을 소지하고 있는지 확인합니다.
      * itemId 예시: "diamond", "iron_sword", "bow"
      */
     //% blockId=ai_entity_has_item
-    //% block="$scanCenter 주변 반경 $radius 칸에서 $name 이(가) $itemId 소지"
-    //% radius.defl=3 radius.min=1 radius.max=10
+    //% block="$target 이(가) $itemId 소지"
+    //% target.shadow=ai_basic_target
     //% weight=185
-    export function entityHasItem(scanCenter: ScanCenter, name: string, radius: number, itemId: string): boolean {
-        // 신호 블록 초기화
+    export function entityHasItem(target: TargetSelector, itemId: string): boolean {
+        target.addRule("hasitem", "{item=" + itemId + "}")
         player.execute("setblock 1000 5 1000 air 0 destroy")
-        // 에이전트 또는 플레이어 기준으로 체크
-        if (scanCenter == ScanCenter.Agent) {
-            player.execute("execute @e[type=agent] ~~~ execute @e[name=" + name + ",r=" + radius + ",hasitem={item=" + itemId + "}] ~~~ setblock 1000 5 1000 stone")
-        } else {
-            player.execute("execute @e[name=" + name + ",r=" + radius + ",hasitem={item=" + itemId + "}] ~~~ setblock 1000 5 1000 stone")
-        }
+        player.execute("execute " + target + " ~~~ setblock 1000 5 1000 stone")
         return blocks.testForBlock(Block.Stone, world(1000, 5, 1000))
     }
 
