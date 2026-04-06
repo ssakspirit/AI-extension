@@ -14,6 +14,26 @@ namespace ai {
     }
 
     /**
+     * 아이템 소지 위치 슬롯
+     */
+    export const enum ItemSlot {
+        //% block="인벤토리"
+        Inventory = 0,
+        //% block="주 손"
+        Mainhand = 1,
+        //% block="보조 손"
+        Offhand = 2,
+        //% block="헬멧"
+        Head = 3,
+        //% block="흉갑"
+        Chest = 4,
+        //% block="레깅스"
+        Legs = 5,
+        //% block="부츠"
+        Feet = 6
+    }
+
+    /**
      * 기본 대상 선택자 (@a, @r, @p)
      */
     export const enum BasicTarget {
@@ -72,13 +92,20 @@ namespace ai {
      * itemId 예시: "diamond", "iron_sword", "bow"
      */
     //% blockId=ai_entity_has_item
-    //% block="$target 이(가) $item 소지"
+    //% block="$target 이(가) $slot 에 $item 소지"
     //% target.shadow=ai_basic_target
     //% item.shadow=minecraftItem
     //% item.defl=GRASS
     //% weight=185
-    export function entityHasItem(target: TargetSelector, item: number): boolean {
-        target.addRule("hasitem", "{item=" + blocks.nameOfBlock(item) + "}")
+    export function entityHasItem(target: TargetSelector, slot: ItemSlot, item: number): boolean {
+        let slotName = "slot.inventory"
+        if (slot == ItemSlot.Mainhand) slotName = "slot.weapon.mainhand"
+        else if (slot == ItemSlot.Offhand) slotName = "slot.weapon.offhand"
+        else if (slot == ItemSlot.Head) slotName = "slot.armor.head"
+        else if (slot == ItemSlot.Chest) slotName = "slot.armor.chest"
+        else if (slot == ItemSlot.Legs) slotName = "slot.armor.legs"
+        else if (slot == ItemSlot.Feet) slotName = "slot.armor.feet"
+        target.addRule("hasitem", "{item=" + blocks.nameOfBlock(item) + ",location=" + slotName + "}")
         player.execute("setblock 1000 5 1000 air 0 destroy")
         player.execute("execute " + target + " ~~~ setblock 1000 5 1000 stone")
         return blocks.testForBlock(Block.Stone, world(1000, 5, 1000))
