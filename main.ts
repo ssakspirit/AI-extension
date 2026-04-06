@@ -72,11 +72,13 @@ namespace ai {
      * itemId 예시: "diamond", "iron_sword", "bow"
      */
     //% blockId=ai_entity_has_item
-    //% block="$target 이(가) $itemId 소지"
+    //% block="$target 이(가) $item 소지"
     //% target.shadow=ai_basic_target
+    //% item.shadow=minecraftItem
+    //% item.defl=GRASS
     //% weight=185
-    export function entityHasItem(target: TargetSelector, itemId: string): boolean {
-        target.addRule("hasitem", "{item=" + itemId + "}")
+    export function entityHasItem(target: TargetSelector, item: number): boolean {
+        target.addRule("hasitem", "{item=" + item + "}")
         player.execute("setblock 1000 5 1000 air 0 destroy")
         player.execute("execute " + target + " ~~~ setblock 1000 5 1000 stone")
         return blocks.testForBlock(Block.Stone, world(1000, 5, 1000))
