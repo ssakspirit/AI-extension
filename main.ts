@@ -28,6 +28,31 @@ namespace ai {
     }
 
     /**
+     * 기본 대상 선택자
+     */
+    export const enum BasicTarget {
+        //% block="@a 모든 플레이어"
+        AllPlayers = 0,
+        //% block="@r 랜덤 플레이어"
+        RandomPlayer = 1,
+        //% block="@s 자기 자신"
+        Self = 2,
+        //% block="@p 가장 가까운 플레이어"
+        NearestPlayer = 3
+    }
+
+    // shadow 전용 — 블록 목록에 표시되지 않음
+    //% blockId=ai_basic_target
+    //% block="$t"
+    //% blockHidden=true
+    export function basicTarget(t: BasicTarget): TargetSelector {
+        if (t == BasicTarget.RandomPlayer) return mobs.target(RANDOM_PLAYER)
+        if (t == BasicTarget.Self) return mobs.target(SELF)
+        if (t == BasicTarget.NearestPlayer) return mobs.target(NEAREST_PLAYER)
+        return mobs.target(ALL_PLAYERS)
+    }
+
+    /**
      * 아이템 소지 위치 슬롯
      */
     export const enum ItemSlot {
@@ -75,7 +100,7 @@ namespace ai {
      */
     //% blockId=ai_entity_has_named_item
     //% block="$target 이(가) $slot 에 이름이 $itemName 인 아이템 소지"
-    //% target.shadow=ai_scan_near
+    //% target.shadow=ai_basic_target
     //% weight=195
     export function entityHasNamedItem(target: TargetSelector, slot: ItemSlot, itemName: string): boolean {
         let slotName = "slot.inventory"
@@ -96,7 +121,7 @@ namespace ai {
      */
     //% blockId=ai_entity_has_item
     //% block="$target 이(가) $slot 에 $item 소지"
-    //% target.shadow=ai_scan_near
+    //% target.shadow=ai_basic_target
     //% item.shadow=minecraftItem
     //% item.defl=GRASS
     //% weight=190
