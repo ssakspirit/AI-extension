@@ -78,7 +78,7 @@ namespace ai {
     //% item.defl=GRASS
     //% weight=185
     export function entityHasItem(target: TargetSelector, item: number): boolean {
-        target.addRule("hasitem", "{item=" + item + "}")
+        target.addRule("hasitem", "{item=" + blocks.nameOfBlock(item) + "}")
         player.execute("setblock 1000 5 1000 air 0 destroy")
         player.execute("execute " + target + " ~~~ setblock 1000 5 1000 stone")
         return blocks.testForBlock(Block.Stone, world(1000, 5, 1000))
