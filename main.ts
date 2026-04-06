@@ -27,7 +27,7 @@ namespace ai {
     //% radius.defl=3 radius.min=1 radius.max=10
     //% count.defl=1 count.min=1 count.max=10
     //% weight=200
-    export function scanNearAgent(scanTarget: ScanTarget, radius: number, count: number): string {
+    export function scanNearAgent(scanTarget: ScanTarget, radius: number, count: number): TargetSelector {
         let sel = mobs.near(mobs.target(ALL_ENTITIES), agent.getPosition(), radius)
         if (scanTarget == ScanTarget.Player) {
             sel = mobs.near(mobs.target(ALL_PLAYERS), agent.getPosition(), radius)
@@ -37,16 +37,7 @@ namespace ai {
             sel.addRule("family", "mob")
         }
         sel.addRule("c", "" + count)
-        let raw = "" + sel
-        let parts = raw.split(", ")
-        let results: string[] = []
-        for (let i = 0; i < parts.length; i++) {
-            if (parts[i].indexOf(".Agent") < 0) {
-                results.push(parts[i])
-            }
-        }
-        if (results.length == 0) return "없음"
-        return results.join(", ")
+        return sel
     }
 
 }
