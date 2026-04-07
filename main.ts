@@ -96,27 +96,43 @@ namespace ai {
         return sel
     }
 
-/**
-     * 대상이 특정 슬롯에 특정 아이템을 소지하고 있는지 확인합니다.
+    function toSlotName(slot: ItemSlot): string {
+        if (slot == ItemSlot.Hotbar) return "slot.hotbar"
+        if (slot == ItemSlot.Mainhand) return "slot.weapon.mainhand"
+        if (slot == ItemSlot.Offhand) return "slot.weapon.offhand"
+        if (slot == ItemSlot.Head) return "slot.armor.head"
+        if (slot == ItemSlot.Chest) return "slot.armor.chest"
+        if (slot == ItemSlot.Legs) return "slot.armor.legs"
+        if (slot == ItemSlot.Feet) return "slot.armor.feet"
+        return "slot.inventory"
+    }
+
+    /**
+     * 대상이 특정 슬롯에 특정 아이템을 소지하고 있는지 확인합니다. (아이템 피커)
+     */
+    //% blockId=ai_entity_has_item_picker
+    //% block="$target 이(가) $slot 에 $item 소지"
+    //% target.shadow=ai_basic_target
+    //% item.shadow=minecraftItem
+    //% item.defl=GRASS
+    //% weight=195
+    export function entityHasItemPicker(target: TargetSelector, slot: ItemSlot, item: number): TargetSelector {
+        let itemId = blocks.nameOfBlock(item).toLowerCase().split(" ").join("_")
+        target.addRule("hasitem", "{item=" + itemId + ",location=" + toSlotName(slot) + "}")
+        return target
+    }
+
+    /**
+     * 대상이 특정 슬롯에 특정 아이템을 소지하고 있는지 확인합니다. (아이템 ID 직접 입력)
      */
     //% blockId=ai_entity_has_item
     //% block="$target 이(가) $slot 에 $itemId 소지"
     //% target.shadow=ai_basic_target
     //% itemId.defl="grass"
     //% weight=190
-    export function entityHasItem(target: TargetSelector, slot: ItemSlot, itemId: string): boolean {
-        let slotName = "slot.inventory"
-        if (slot == ItemSlot.Hotbar) slotName = "slot.hotbar"
-        else if (slot == ItemSlot.Mainhand) slotName = "slot.weapon.mainhand"
-        else if (slot == ItemSlot.Offhand) slotName = "slot.weapon.offhand"
-        else if (slot == ItemSlot.Head) slotName = "slot.armor.head"
-        else if (slot == ItemSlot.Chest) slotName = "slot.armor.chest"
-        else if (slot == ItemSlot.Legs) slotName = "slot.armor.legs"
-        else if (slot == ItemSlot.Feet) slotName = "slot.armor.feet"
-        target.addRule("hasitem", "{item=" + itemId + ",location=" + slotName + "}")
-        player.execute("setblock 1000 5 1000 air 0 destroy")
-        player.execute("execute " + target + " ~~~ setblock 1000 5 1000 stone")
-        return blocks.testForBlock(Block.Stone, world(1000, 5, 1000))
+    export function entityHasItem(target: TargetSelector, slot: ItemSlot, itemId: string): TargetSelector {
+        target.addRule("hasitem", "{item=" + itemId + ",location=" + toSlotName(slot) + "}")
+        return target
     }
 
 }
