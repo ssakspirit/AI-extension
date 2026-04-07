@@ -133,7 +133,7 @@ namespace ai {
         else if (slot == ItemSlot.Chest) slotName = "slot.armor.chest"
         else if (slot == ItemSlot.Legs) slotName = "slot.armor.legs"
         else if (slot == ItemSlot.Feet) slotName = "slot.armor.feet"
-        target.addRule("hasitem", "{item=" + blocks.nameOfBlock(item) + ",location=" + slotName + "}")
+        target.addRule("hasitem", "{item=" + item + ",location=" + slotName + "}")
         player.execute("setblock 1000 5 1000 air 0 destroy")
         player.execute("execute " + target + " ~~~ setblock 1000 5 1000 stone")
         return blocks.testForBlock(Block.Stone, world(1000, 5, 1000))
