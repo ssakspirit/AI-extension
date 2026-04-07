@@ -122,19 +122,6 @@ namespace ai {
         return target
     }
 
-    /**
-     * 대상이 특정 슬롯에 특정 아이템을 소지하고 있는지 확인합니다. (아이템 ID 직접 입력)
-     */
-    //% blockId=ai_entity_has_item
-    //% block="$target 이(가) $slot 에 $itemId 소지"
-    //% target.shadow=ai_basic_target
-    //% slot.defl=ItemSlot.Hotbar
-    //% itemId.defl="grass_block"
-    //% weight=190
-    export function entityHasItem(target: TargetSelector, slot: ItemSlot, itemId: string): TargetSelector {
-        target.addRule("hasitem", "{item=" + itemId + ",location=" + toSlotName(slot) + "}")
-        return target
-    }
 
     /**
      * 에이전트가 특정 아이템을 지정 방향으로 모두 내려놓습니다.
