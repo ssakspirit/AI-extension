@@ -156,28 +156,60 @@ namespace ai {
             }
         }
 
-        // 2단계: 아이템 ID 기준 버블 정렬
-        for (let i = 0; i < items.length - 1; i++) {
-            for (let j = 0; j < items.length - 1 - i; j++) {
-                if (items[j] > items[j + 1]) {
-                    let tmpItem = items[j]
-                    items[j] = items[j + 1]
-                    items[j + 1] = tmpItem
-                    let tmpCount = counts[j]
-                    counts[j] = counts[j + 1]
-                    counts[j + 1] = tmpCount
+        // 2단계: 같은 아이템 합산 (스택 한계 64)
+        let mergedItems: number[] = []
+        let mergedCounts: number[] = []
+        for (let i = 0; i < items.length; i++) {
+            let found = -1
+            for (let j = 0; j < mergedItems.length; j++) {
+                if (mergedItems[j] == items[i] && mergedCounts[j] < 64) {
+                    found = j
+                    break
+                }
+            }
+            if (found >= 0) {
+                let remaining = counts[i]
+                while (remaining > 0) {
+                    let space = 64 - mergedCounts[found]
+                    if (space >= remaining) {
+                        mergedCounts[found] += remaining
+                        remaining = 0
+                    } else {
+                        mergedCounts[found] = 64
+                        remaining -= space
+                        mergedItems.push(items[i])
+                        mergedCounts.push(0)
+                        found = mergedItems.length - 1
+                    }
+                }
+            } else {
+                mergedItems.push(items[i])
+                mergedCounts.push(counts[i])
+            }
+        }
+
+        // 3단계: 아이템 ID 기준 버블 정렬
+        for (let i = 0; i < mergedItems.length - 1; i++) {
+            for (let j = 0; j < mergedItems.length - 1 - i; j++) {
+                if (mergedItems[j] > mergedItems[j + 1]) {
+                    let tmpItem = mergedItems[j]
+                    mergedItems[j] = mergedItems[j + 1]
+                    mergedItems[j + 1] = tmpItem
+                    let tmpCount = mergedCounts[j]
+                    mergedCounts[j] = mergedCounts[j + 1]
+                    mergedCounts[j + 1] = tmpCount
                 }
             }
         }
 
-        // 3단계: 전체 슬롯 비우기
+        // 4단계: 전체 슬롯 비우기
         for (let i = 0; i <= 28; i++) {
             agent.setItem(AIR, 1, i)
         }
 
-        // 4단계: 정렬된 순서대로 다시 쓰기
-        for (let i = 0; i < items.length; i++) {
-            agent.setItem(items[i], counts[i], i)
+        // 5단계: 정렬된 순서대로 다시 쓰기
+        for (let i = 0; i < mergedItems.length; i++) {
+            agent.setItem(mergedItems[i], mergedCounts[i], i)
         }
     }
 
