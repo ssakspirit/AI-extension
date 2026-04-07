@@ -145,7 +145,7 @@ namespace ai {
     //% item.defl=GRASS
     //% weight=185
     export function agentDropItem(direction: SixDirection, item: number): void {
-        for (let i = 1; i <= 28; i++) {
+        for (let i = 28; i >= 1; i--) {
             if (agent.getItemDetail(i) == item) {
                 let count = agent.getItemCount(i)
                 agent.drop(direction, count, i)
