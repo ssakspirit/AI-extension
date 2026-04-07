@@ -156,39 +156,39 @@ namespace ai {
             }
         }
 
-        // 2단계: 같은 아이템 합산 (스택 한계 64)
-        let mergedItems: number[] = []
-        let mergedCounts: number[] = []
+        // 2단계: 같은 아이템 총합 계산
+        let sumItems: number[] = []
+        let sumCounts: number[] = []
         for (let i = 0; i < items.length; i++) {
             let found = -1
-            for (let j = 0; j < mergedItems.length; j++) {
-                if (mergedItems[j] == items[i] && mergedCounts[j] < 64) {
+            for (let j = 0; j < sumItems.length; j++) {
+                if (sumItems[j] == items[i]) {
                     found = j
                     break
                 }
             }
             if (found >= 0) {
-                let remaining = counts[i]
-                while (remaining > 0) {
-                    let space = 64 - mergedCounts[found]
-                    if (space >= remaining) {
-                        mergedCounts[found] += remaining
-                        remaining = 0
-                    } else {
-                        mergedCounts[found] = 64
-                        remaining -= space
-                        mergedItems.push(items[i])
-                        mergedCounts.push(0)
-                        found = mergedItems.length - 1
-                    }
-                }
+                sumCounts[found] += counts[i]
             } else {
-                mergedItems.push(items[i])
-                mergedCounts.push(counts[i])
+                sumItems.push(items[i])
+                sumCounts.push(counts[i])
             }
         }
 
-        // 3단계: 아이템 ID 기준 버블 정렬
+        // 3단계: 총합을 64개씩 슬롯으로 분리
+        let mergedItems: number[] = []
+        let mergedCounts: number[] = []
+        for (let i = 0; i < sumItems.length; i++) {
+            let remaining = sumCounts[i]
+            while (remaining > 0) {
+                let stack = remaining > 64 ? 64 : remaining
+                mergedItems.push(sumItems[i])
+                mergedCounts.push(stack)
+                remaining -= stack
+            }
+        }
+
+        // 4단계: 아이템 ID 기준 버블 정렬
         for (let i = 0; i < mergedItems.length - 1; i++) {
             for (let j = 0; j < mergedItems.length - 1 - i; j++) {
                 if (mergedItems[j] > mergedItems[j + 1]) {
@@ -202,12 +202,12 @@ namespace ai {
             }
         }
 
-        // 4단계: 전체 슬롯 비우기
+        // 5단계: 전체 슬롯 비우기
         for (let i = 0; i <= 28; i++) {
             agent.setItem(AIR, 1, i)
         }
 
-        // 5단계: 정렬된 순서대로 다시 쓰기
+        // 6단계: 정렬된 순서대로 다시 쓰기
         for (let i = 0; i < mergedItems.length; i++) {
             agent.setItem(mergedItems[i], mergedCounts[i], i)
         }
