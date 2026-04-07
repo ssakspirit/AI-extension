@@ -94,29 +94,7 @@ namespace ai {
         return sel
     }
 
-    /**
-     * 대상이 특정 슬롯에 이름이 붙은 아이템을 소지하고 있는지 확인합니다.
-     * 이름은 네임태그 또는 모루에서 지정한 커스텀 이름입니다.
-     */
-    //% blockId=ai_entity_has_named_item
-    //% block="$target 이(가) $slot 에 이름이 $itemName 인 아이템 소지"
-    //% target.shadow=ai_basic_target
-    //% weight=195
-    export function entityHasNamedItem(target: TargetSelector, slot: ItemSlot, itemName: string): boolean {
-        let slotName = "slot.inventory"
-        if (slot == ItemSlot.Mainhand) slotName = "slot.weapon.mainhand"
-        else if (slot == ItemSlot.Offhand) slotName = "slot.weapon.offhand"
-        else if (slot == ItemSlot.Head) slotName = "slot.armor.head"
-        else if (slot == ItemSlot.Chest) slotName = "slot.armor.chest"
-        else if (slot == ItemSlot.Legs) slotName = "slot.armor.legs"
-        else if (slot == ItemSlot.Feet) slotName = "slot.armor.feet"
-        target.addRule("hasitem", "{name=" + itemName + ",location=" + slotName + "}")
-        player.execute("setblock 1000 5 1000 air 0 destroy")
-        player.execute("execute " + target + " ~~~ setblock 1000 5 1000 stone")
-        return blocks.testForBlock(Block.Stone, world(1000, 5, 1000))
-    }
-
-    /**
+/**
      * 대상이 특정 슬롯에 특정 아이템을 소지하고 있는지 확인합니다.
      */
     //% blockId=ai_entity_has_item
