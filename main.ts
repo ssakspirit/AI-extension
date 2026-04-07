@@ -128,7 +128,8 @@ namespace ai {
     //% blockId=ai_entity_has_item
     //% block="$target 이(가) $slot 에 $itemId 소지"
     //% target.shadow=ai_basic_target
-    //% itemId.defl="grass"
+    //% slot.defl=ItemSlot.Hotbar
+    //% itemId.defl="grass_block"
     //% weight=190
     export function entityHasItem(target: TargetSelector, slot: ItemSlot, itemId: string): TargetSelector {
         target.addRule("hasitem", "{item=" + itemId + ",location=" + toSlotName(slot) + "}")
