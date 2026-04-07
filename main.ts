@@ -98,12 +98,11 @@ namespace ai {
      * 대상이 특정 슬롯에 특정 아이템을 소지하고 있는지 확인합니다.
      */
     //% blockId=ai_entity_has_item
-    //% block="$target 이(가) $slot 에 $item 소지"
+    //% block="$target 이(가) $slot 에 $itemId 소지"
     //% target.shadow=ai_basic_target
-    //% item.shadow=minecraftItem
-    //% item.defl=GRASS
+    //% itemId.defl="grass"
     //% weight=190
-    export function entityHasItem(target: TargetSelector, slot: ItemSlot, item: number): boolean {
+    export function entityHasItem(target: TargetSelector, slot: ItemSlot, itemId: string): boolean {
         let slotName = "slot.inventory"
         if (slot == ItemSlot.Mainhand) slotName = "slot.weapon.mainhand"
         else if (slot == ItemSlot.Offhand) slotName = "slot.weapon.offhand"
@@ -111,7 +110,7 @@ namespace ai {
         else if (slot == ItemSlot.Chest) slotName = "slot.armor.chest"
         else if (slot == ItemSlot.Legs) slotName = "slot.armor.legs"
         else if (slot == ItemSlot.Feet) slotName = "slot.armor.feet"
-        target.addRule("hasitem", "{item=" + item + ",location=" + slotName + "}")
+        target.addRule("hasitem", "{item=" + itemId + ",location=" + slotName + "}")
         player.execute("setblock 1000 5 1000 air 0 destroy")
         player.execute("execute " + target + " ~~~ setblock 1000 5 1000 stone")
         return blocks.testForBlock(Block.Stone, world(1000, 5, 1000))
