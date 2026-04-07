@@ -172,7 +172,7 @@ namespace ai {
 
         // 3단계: 전체 슬롯 비우기
         for (let i = 0; i <= 28; i++) {
-            agent.setItem(0, 0, i)
+            agent.setItem(AIR, 1, i)
         }
 
         // 4단계: 정렬된 순서대로 다시 쓰기
