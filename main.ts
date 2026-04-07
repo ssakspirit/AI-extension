@@ -137,6 +137,23 @@ namespace ai {
     }
 
     /**
+     * 에이전트가 특정 아이템을 지정 방향으로 모두 내려놓습니다.
+     */
+    //% blockId=ai_agent_drop_item
+    //% block="에이전트가 $direction 방향으로 $item 내려놓기"
+    //% item.shadow=minecraftItem
+    //% item.defl=GRASS
+    //% weight=185
+    export function agentDropItem(direction: SixDirection, item: number): void {
+        for (let i = 1; i <= 28; i++) {
+            if (agent.getItemDetail(i) == item) {
+                let count = agent.getItemCount(i)
+                agent.drop(direction, count, i)
+            }
+        }
+    }
+
+    /**
      * 에이전트 인벤토리를 아이템 종류별로 정렬합니다.
      */
     //% blockId=ai_sort_agent_inventory
