@@ -146,8 +146,8 @@ namespace ai {
         let items: number[] = []
         let counts: number[] = []
 
-        // 1단계: 슬롯 0~28 읽기 (빈 슬롯 제외)
-        for (let i = 0; i <= 28; i++) {
+        // 1단계: 슬롯 1~28 읽기 (빈 슬롯 제외)
+        for (let i = 1; i <= 28; i++) {
             let detail = agent.getItemDetail(i)
             let count = agent.getItemCount(i)
             if (detail != 0 && count > 0) {
@@ -202,14 +202,14 @@ namespace ai {
             }
         }
 
-        // 5단계: 전체 슬롯 비우기
-        for (let i = 0; i <= 28; i++) {
+        // 5단계: 전체 슬롯 비우기 (1~28)
+        for (let i = 1; i <= 28; i++) {
             agent.setItem(AIR, 1, i)
         }
 
-        // 6단계: 정렬된 순서대로 다시 쓰기
+        // 6단계: 정렬된 순서대로 다시 쓰기 (1부터)
         for (let i = 0; i < mergedItems.length; i++) {
-            agent.setItem(mergedItems[i], mergedCounts[i], i)
+            agent.setItem(mergedItems[i], mergedCounts[i], i + 1)
         }
     }
 
