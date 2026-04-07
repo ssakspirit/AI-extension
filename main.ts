@@ -58,18 +58,20 @@ namespace ai {
     export const enum ItemSlot {
         //% block="인벤토리"
         Inventory = 0,
+        //% block="핫바"
+        Hotbar = 1,
         //% block="주 손"
-        Mainhand = 1,
+        Mainhand = 2,
         //% block="보조 손"
-        Offhand = 2,
+        Offhand = 3,
         //% block="헬멧"
-        Head = 3,
+        Head = 4,
         //% block="흉갑"
-        Chest = 4,
+        Chest = 5,
         //% block="레깅스"
-        Legs = 5,
+        Legs = 6,
         //% block="부츠"
-        Feet = 6
+        Feet = 7
     }
 
     /**
@@ -104,7 +106,8 @@ namespace ai {
     //% weight=190
     export function entityHasItem(target: TargetSelector, slot: ItemSlot, itemId: string): boolean {
         let slotName = "slot.inventory"
-        if (slot == ItemSlot.Mainhand) slotName = "slot.weapon.mainhand"
+        if (slot == ItemSlot.Hotbar) slotName = "slot.hotbar"
+        else if (slot == ItemSlot.Mainhand) slotName = "slot.weapon.mainhand"
         else if (slot == ItemSlot.Offhand) slotName = "slot.weapon.offhand"
         else if (slot == ItemSlot.Head) slotName = "slot.armor.head"
         else if (slot == ItemSlot.Chest) slotName = "slot.armor.chest"
