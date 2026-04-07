@@ -35,8 +35,10 @@ namespace ai {
         AllPlayers = 0,
         //% block="@r 랜덤 플레이어"
         RandomPlayer = 1,
+        //% block="@s 자기 자신"
+        Self = 2,
         //% block="@p 가장 가까운 플레이어"
-        NearestPlayer = 2
+        NearestPlayer = 3
     }
 
     // shadow 전용 — 블록 목록에 표시되지 않음
@@ -45,6 +47,7 @@ namespace ai {
     //% blockHidden=true
     export function basicTarget(t: BasicTarget): TargetSelector {
         if (t == BasicTarget.RandomPlayer) return mobs.target(RANDOM_PLAYER)
+        if (t == BasicTarget.Self) return mobs.target(LOCAL_PLAYER)
         if (t == BasicTarget.NearestPlayer) return mobs.target(NEAREST_PLAYER)
         return mobs.target(ALL_PLAYERS)
     }
