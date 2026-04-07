@@ -149,7 +149,6 @@ namespace ai {
             if (agent.getItemDetail(i) == item) {
                 let count = agent.getItemCount(i)
                 agent.drop(direction, i, count)
-                loops.pause(200)
             }
         }
     }
