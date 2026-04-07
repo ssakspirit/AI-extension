@@ -136,4 +136,49 @@ namespace ai {
         return target
     }
 
+    /**
+     * 에이전트 인벤토리를 아이템 종류별로 정렬합니다.
+     */
+    //% blockId=ai_sort_agent_inventory
+    //% block="에이전트 인벤토리 정렬"
+    //% weight=180
+    export function sortAgentInventory(): void {
+        let items: number[] = []
+        let counts: number[] = []
+
+        // 1단계: 슬롯 0~28 읽기 (빈 슬롯 제외)
+        for (let i = 0; i <= 28; i++) {
+            let detail = agent.getItemDetail(i)
+            let count = agent.getItemCount(i)
+            if (detail != 0 && count > 0) {
+                items.push(detail)
+                counts.push(count)
+            }
+        }
+
+        // 2단계: 아이템 ID 기준 버블 정렬
+        for (let i = 0; i < items.length - 1; i++) {
+            for (let j = 0; j < items.length - 1 - i; j++) {
+                if (items[j] > items[j + 1]) {
+                    let tmpItem = items[j]
+                    items[j] = items[j + 1]
+                    items[j + 1] = tmpItem
+                    let tmpCount = counts[j]
+                    counts[j] = counts[j + 1]
+                    counts[j + 1] = tmpCount
+                }
+            }
+        }
+
+        // 3단계: 전체 슬롯 비우기
+        for (let i = 0; i <= 28; i++) {
+            agent.setItem(0, 0, i)
+        }
+
+        // 4단계: 정렬된 순서대로 다시 쓰기
+        for (let i = 0; i < items.length; i++) {
+            agent.setItem(items[i], counts[i], i)
+        }
+    }
+
 }
