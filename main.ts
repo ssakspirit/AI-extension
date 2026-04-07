@@ -217,4 +217,87 @@ namespace ai {
         }
     }
 
+    // 블록 데이터 분석 전역 상태
+    let _totalBroken = 0
+    let _trackedBlocks: number[] = []
+    let _blockCounts: number[] = []
+
+    function getPosInDirection(direction: SixDirection): Position {
+        let pos = agent.getPosition()
+        let orient = agent.getOrientation()
+        let dx = 0, dy = 0, dz = 0
+
+        if (direction == SixDirection.Up) {
+            dy = 1
+        } else if (direction == SixDirection.Down) {
+            dy = -1
+        } else {
+            let fx = 0, fz = 0
+            if (orient == 0) { fz = 1 }
+            else if (orient == 180 || orient == -180) { fz = -1 }
+            else if (orient == -90) { fx = 1 }
+            else { fx = -1 } // 90
+
+            if (direction == SixDirection.Forward) {
+                dx = fx; dz = fz
+            } else if (direction == SixDirection.Back) {
+                dx = -fx; dz = -fz
+            } else if (direction == SixDirection.Left) {
+                dx = -fz; dz = fx
+            } else { // Right
+                dx = fz; dz = -fx
+            }
+        }
+
+        return positions.create(pos.x + dx, pos.y + dy, pos.z + dz)
+    }
+
+    /**
+     * 에이전트가 지정 방향으로 N번 블록을 부수며 블록 종류를 분석합니다.
+     */
+    //% blockId=ai_analyze_blocks
+    //% block="에이전트 $direction 방향 $count 번 블록 분석||대상 블록 1: $block1 대상 블록 2: $block2"
+    //% count.defl=5 count.min=1 count.max=20
+    //% block1.shadow=minecraftBlock block1.defl=GRASS
+    //% block2.shadow=minecraftBlock block2.defl=STONE
+    //% expandableArgumentMode="toggle"
+    //% weight=175
+    export function analyzeBlocks(direction: SixDirection, count: number, block1: number = 0, block2: number = 0): void {
+        _totalBroken = 0
+        _trackedBlocks = []
+        _blockCounts = []
+
+        if (block1 != 0) { _trackedBlocks.push(block1); _blockCounts.push(0) }
+        if (block2 != 0) { _trackedBlocks.push(block2); _blockCounts.push(0) }
+
+        for (let i = 0; i < count; i++) {
+            let blockPos = getPosInDirection(direction)
+            for (let j = 0; j < _trackedBlocks.length; j++) {
+                if (blocks.testForBlock(_trackedBlocks[j], blockPos)) {
+                    _blockCounts[j]++
+                    break
+                }
+            }
+            _totalBroken++
+            agent.destroy(direction)
+        }
+    }
+
+    /**
+     * 마지막 분석에서 특정 블록의 비율(0~1)을 반환합니다.
+     */
+    //% blockId=ai_get_analysis_result
+    //% block="$block 분석 결과"
+    //% block.shadow=minecraftBlock block.defl=GRASS
+    //% weight=170
+    export function getAnalysisResult(block: number): number {
+        if (_totalBroken == 0) return 0
+        for (let i = 0; i < _trackedBlocks.length; i++) {
+            if (_trackedBlocks[i] == block) {
+                return _blockCounts[i] / _totalBroken
+            }
+        }
+        return 0
+    }
+
 }
