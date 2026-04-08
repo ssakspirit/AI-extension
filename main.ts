@@ -295,23 +295,27 @@ namespace ai {
     /**
      * 에이전트가 지정 방향으로 N번 블록을 부수며 블록 종류를 분석합니다.
      */
-    //% blockId=ai_analyze_blocks
-    //% block="에이전트 $direction 방향 블록 분석 $block1||$block2||$block3||$block4||$block5"
-    //% block1.shadow=minecraftBlock block1.defl=GRASS
-    //% block2.shadow=minecraftBlock block2.defl=STONE
-    //% block3.shadow=minecraftBlock block3.defl=DIRT
-    //% block4.shadow=minecraftBlock block4.defl=SAND
-    //% block5.shadow=minecraftBlock block5.defl=GRAVEL
-    //% expandableArgumentMode="enabled"
-    //% weight=175
-    export function analyzeBlocks(direction: AgentDirection, block1: number, block2: number = 0, block3: number = 0, block4: number = 0, block5: number = 0): void {
-        let candidates = [block1, block2, block3, block4, block5]
-        for (let k = 0; k < candidates.length; k++) {
-            if (candidates[k] != 0 && _trackedBlocks.indexOf(candidates[k]) < 0) {
-                _trackedBlocks.push(candidates[k]); _blockCounts.push(0)
-            }
+    /**
+     * 분석할 블록 종류를 등록합니다. 분석 전에 호출하세요.
+     */
+    //% blockId=ai_add_tracked_block
+    //% block="추적 블록 추가 $block"
+    //% block.shadow=minecraftBlock block.defl=GRASS
+    //% weight=177
+    export function addTrackedBlock(block: number): void {
+        if (block != 0 && _trackedBlocks.indexOf(block) < 0) {
+            _trackedBlocks.push(block)
+            _blockCounts.push(0)
         }
+    }
 
+    /**
+     * 에이전트가 지정 방향의 블록을 한 번 부수며 종류를 기록합니다.
+     */
+    //% blockId=ai_analyze_blocks
+    //% block="에이전트 $direction 방향 블록 분석"
+    //% weight=175
+    export function analyzeBlocks(direction: AgentDirection): void {
         let blockPos = getPosInDirection(direction)
         for (let j = 0; j < _trackedBlocks.length; j++) {
             if (blocks.testForBlock(_trackedBlocks[j], blockPos)) {
