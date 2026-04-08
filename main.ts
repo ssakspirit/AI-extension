@@ -158,11 +158,12 @@ namespace ai {
     //% item.shadow=minecraftItem
     //% item.defl=GRASS
     //% weight=185
-    export function agentDropItem(direction: SixDirection, item: number): void {
+    export function agentDropItem(direction: AgentDirection, item: number): void {
+        let sixDir = toSixDirection(direction)
         for (let i = 28; i >= 1; i--) {
             if (agent.getItemDetail(i) == item) {
                 let count = agent.getItemCount(i)
-                agent.drop(direction, i, count)
+                agent.drop(sixDir, i, count)
             }
         }
     }
