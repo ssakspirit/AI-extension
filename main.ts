@@ -1,6 +1,6 @@
 // @ts-nocheck
 //% color=#1E90FF weight=100 icon="\uf544"
-//% block="AI"
+//% block="🤖 AI"
 namespace ai {
 
     // ─── 열거형 ───────────────────────────────────────────────
