@@ -232,7 +232,7 @@ namespace ai {
 
     //% blockId=ai_agent_drop_item
     //% block="에이전트가 $direction 방향으로 $item 내려놓기"
-    //% item.shadow=minecraftItem
+    //% item.shadow=minecraftBlock
     //% item.defl=GRASS
     //% group="에이전트 인벤토리"
     //% weight=200
