@@ -1,5 +1,5 @@
 // @ts-nocheck
-//% color=#1E90FF weight=100 icon="\uf544" block="🤖 AI"
+//% color=#1E90FF weight=100 icon="\uf2db" block="🤖 AI"
 namespace ai {
 
     // ─── 열거형 ───────────────────────────────────────────────
