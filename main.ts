@@ -296,12 +296,12 @@ namespace ai {
      * 에이전트가 지정 방향으로 N번 블록을 부수며 블록 종류를 분석합니다.
      */
     //% blockId=ai_analyze_blocks
-    //% block="에이전트 $direction 방향 블록 분석||대상 블록 1: $block1||대상 블록 2: $block2"
+    //% block="에이전트 $direction 방향 블록 분석 $block1||대상 블록 2: $block2"
     //% block1.shadow=minecraftBlock block1.defl=GRASS
     //% block2.shadow=minecraftBlock block2.defl=STONE
     //% expandableArgumentMode="enabled"
     //% weight=175
-    export function analyzeBlocks(direction: AgentDirection, block1: number = 0, block2: number = 0): void {
+    export function analyzeBlocks(direction: AgentDirection, block1: number, block2: number = 0): void {
         if (block1 != 0 && _trackedBlocks.indexOf(block1) < 0) {
             _trackedBlocks.push(block1); _blockCounts.push(0)
         }
