@@ -28,6 +28,33 @@ namespace ai {
     }
 
     /**
+     * 에이전트 이동/파괴 방향 (한국어)
+     */
+    export const enum AgentDirection {
+        //% block="앞"
+        Forward = 0,
+        //% block="뒤"
+        Back = 1,
+        //% block="왼"
+        Left = 2,
+        //% block="오른"
+        Right = 3,
+        //% block="위"
+        Up = 4,
+        //% block="아래"
+        Down = 5
+    }
+
+    function toSixDirection(dir: AgentDirection): SixDirection {
+        if (dir == AgentDirection.Back) return SixDirection.Back
+        if (dir == AgentDirection.Left) return SixDirection.Left
+        if (dir == AgentDirection.Right) return SixDirection.Right
+        if (dir == AgentDirection.Up) return SixDirection.Up
+        if (dir == AgentDirection.Down) return SixDirection.Down
+        return SixDirection.Forward
+    }
+
+    /**
      * 기본 대상 선택자
      */
     export const enum BasicTarget {
@@ -222,14 +249,14 @@ namespace ai {
     let _trackedBlocks: number[] = []
     let _blockCounts: number[] = []
 
-    function getPosInDirection(direction: SixDirection): Position {
+    function getPosInDirection(direction: AgentDirection): Position {
         let pos = agent.getPosition()
         let orient = agent.getOrientation()
         let dx = 0, dy = 0, dz = 0
 
-        if (direction == SixDirection.Up) {
+        if (direction == AgentDirection.Up) {
             dy = 1
-        } else if (direction == SixDirection.Down) {
+        } else if (direction == AgentDirection.Down) {
             dy = -1
         } else {
             let fx = 0, fz = 0
@@ -238,11 +265,11 @@ namespace ai {
             else if (orient == -90) { fx = 1 }
             else { fx = -1 } // 90
 
-            if (direction == SixDirection.Forward) {
+            if (direction == AgentDirection.Forward) {
                 dx = fx; dz = fz
-            } else if (direction == SixDirection.Back) {
+            } else if (direction == AgentDirection.Back) {
                 dx = -fx; dz = -fz
-            } else if (direction == SixDirection.Left) {
+            } else if (direction == AgentDirection.Left) {
                 dx = -fz; dz = fx
             } else { // Right
                 dx = fz; dz = -fx
@@ -262,7 +289,7 @@ namespace ai {
     //% block2.shadow=minecraftBlock block2.defl=STONE
     //% expandableArgumentMode="toggle"
     //% weight=175
-    export function analyzeBlocks(direction: SixDirection, count: number, block1: number = 0, block2: number = 0): void {
+    export function analyzeBlocks(direction: AgentDirection, count: number, block1: number = 0, block2: number = 0): void {
         _totalBroken = 0
         _trackedBlocks = []
         _blockCounts = []
@@ -270,6 +297,7 @@ namespace ai {
         if (block1 != 0) { _trackedBlocks.push(block1); _blockCounts.push(0) }
         if (block2 != 0) { _trackedBlocks.push(block2); _blockCounts.push(0) }
 
+        let sixDir = toSixDirection(direction)
         for (let i = 0; i < count; i++) {
             let blockPos = getPosInDirection(direction)
             for (let j = 0; j < _trackedBlocks.length; j++) {
@@ -279,7 +307,7 @@ namespace ai {
                 }
             }
             _totalBroken++
-            agent.destroy(direction)
+            agent.destroy(sixDir)
         }
     }
 
