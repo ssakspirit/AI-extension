@@ -207,16 +207,23 @@ namespace ai {
         agent.destroy(toSixDirection(direction))
     }
 
-    //% blockId=ai_get_analysis_result
-    //% block="$block 분석 결과"
+    //% blockId=ai_get_total_broken
+    //% block="전체 추적 개수"
+    //% group="블록 데이터 분석"
+    //% weight=175
+    export function getTotalBroken(): number {
+        return _totalBroken
+    }
+
+    //% blockId=ai_get_block_count
+    //% block="$block 추적 개수"
     //% block.shadow=minecraftBlock block.defl=GRASS
     //% group="블록 데이터 분석"
     //% weight=170
-    export function getAnalysisResult(block: number): number {
-        if (_totalBroken == 0) return 0
+    export function getBlockCount(block: number): number {
         for (let i = 0; i < _trackedBlocks.length; i++) {
             if (_trackedBlocks[i] == block) {
-                return _blockCounts[i] / _totalBroken
+                return _blockCounts[i]
             }
         }
         return 0
