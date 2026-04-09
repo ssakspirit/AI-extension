@@ -124,7 +124,7 @@ namespace ai {
                 dx = fz; dz = -fx
             }
         }
-        return positions.create(pos.x + dx, pos.y + dy, pos.z + dz)
+        return positions.add(pos, positions.create(dx, dy, dz))
     }
 
     // ─── 1. 엔티티 감지 ───────────────────────────────────────
