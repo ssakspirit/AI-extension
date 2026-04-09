@@ -198,6 +198,7 @@ namespace ai {
     //% weight=180
     export function analyzeBlocks(direction: AgentDirection): void {
         let blockPos = getPosInDirection(direction)
+        if (blocks.testForBlock(AIR, blockPos)) return
         for (let j = 0; j < _trackedBlocks.length; j++) {
             if (blocks.testForBlock(_trackedBlocks[j], blockPos)) {
                 _blockCounts[j]++
