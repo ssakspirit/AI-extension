@@ -1,4 +1,10 @@
 // @ts-nocheck
+
+// 블록 데이터 분석 전역 상태 (namespace 바깥에 선언해야 MakeCode에서 재초기화 안 됨)
+let _totalBroken = 0
+let _trackedBlocks: number[] = []
+let _blockCounts: number[] = []
+
 //% color=#1E90FF weight=100 icon="\uf2db" block="인공지능"
 namespace ai {
 
@@ -163,10 +169,6 @@ namespace ai {
     }
 
     // ─── 2. 블록 데이터 분석 ──────────────────────────────────
-
-    let _totalBroken = 0
-    let _trackedBlocks: number[] = []
-    let _blockCounts: number[] = []
 
     //% blockId=ai_reset_analysis
     //% block="블록 분석 초기화"
