@@ -256,12 +256,14 @@ namespace ai {
     export function sortAgentInventory(): void {
         let items: number[] = []
         let counts: number[] = []
+        let readableSlots: number[] = []
         for (let i = 1; i <= 28; i++) {
             let detail = agent.getItemDetail(i)
             let count = agent.getItemCount(i)
             if (detail != 0 && count > 0) {
                 items.push(detail)
                 counts.push(count)
+                readableSlots.push(i)
             }
         }
         let sumItems: number[] = []
@@ -297,8 +299,9 @@ namespace ai {
                 }
             }
         }
-        for (let i = 1; i <= 28; i++) { agent.setItem(AIR, 1, i) }
-        for (let i = 0; i < mergedItems.length; i++) { agent.setItem(mergedItems[i], mergedCounts[i], i + 1) }
+        // API가 인식한 슬롯만 초기화 — 인식 불가 아이템(심층암 등)은 보존
+        for (let i = 0; i < readableSlots.length; i++) { agent.setItem(AIR, 1, readableSlots[i]) }
+        for (let i = 0; i < mergedItems.length; i++) { agent.setItem(mergedItems[i], mergedCounts[i], readableSlots[i]) }
     }
 
 }
