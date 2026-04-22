@@ -302,26 +302,26 @@ namespace ai {
                 }
             }
         }
-        let N = mergedItems.length
-        // Phase A: 인식된 슬롯만 초기화
+        // Phase A: 인식된 슬롯만 초기화 (미등록 슬롯은 건드리지 않음)
         for (let i = 1; i <= 28; i++) {
             if (agent.getItemDetail(i) != 0) { agent.setItem(AIR, 1, i) }
         }
-        // Phase B: 미등록 아이템을 슬롯 N+1.. 으로 이동
-        // Pass 1 (왼쪽으로 이동, src > dst): 앞에서 뒤로
-        for (let i = 0; i < unknownSlots.length; i++) {
-            let src = unknownSlots[i]
-            let dst = N + 1 + i
-            if (src > dst) { agent.transfer(unknownCounts[i], src, dst) }
+        // Phase B: 인식된 아이템을 슬롯 1부터 배치 — 미등록 슬롯은 건너뜀
+        let writeSlot = 1
+        for (let i = 0; i < mergedItems.length; i++) {
+            while (writeSlot <= 28) {
+                let isUnknown = false
+                for (let u = 0; u < unknownSlots.length; u++) {
+                    if (unknownSlots[u] == writeSlot) { isUnknown = true; break }
+                }
+                if (!isUnknown) break
+                writeSlot++
+            }
+            if (writeSlot <= 28) {
+                agent.setItem(mergedItems[i], mergedCounts[i], writeSlot)
+                writeSlot++
+            }
         }
-        // Pass 2 (오른쪽으로 이동, src < dst): 뒤에서 앞으로
-        for (let i = unknownSlots.length - 1; i >= 0; i--) {
-            let src = unknownSlots[i]
-            let dst = N + 1 + i
-            if (src < dst) { agent.transfer(unknownCounts[i], src, dst) }
-        }
-        // Phase C: 인식된 아이템을 슬롯 1..N 에 배치
-        for (let i = 0; i < N; i++) { agent.setItem(mergedItems[i], mergedCounts[i], i + 1) }
     }
 
 }
