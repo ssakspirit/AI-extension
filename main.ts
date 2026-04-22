@@ -254,30 +254,33 @@ namespace ai {
     //% group="에이전트 인벤토리"
     //% weight=190
     export function sortAgentInventory(): void {
-        let items: number[] = []
-        let counts: number[] = []
-        let readableSlots: number[] = []
+        let recItems: number[] = []
+        let recCounts: number[] = []
+        let unknownSlots: number[] = []
+        let unknownCounts: number[] = []
         for (let i = 1; i <= 28; i++) {
             let detail = agent.getItemDetail(i)
             let count = agent.getItemCount(i)
             if (detail != 0 && count > 0) {
-                items.push(detail)
-                counts.push(count)
-                readableSlots.push(i)
+                recItems.push(detail)
+                recCounts.push(count)
+            } else if (count > 0) {
+                unknownSlots.push(i)
+                unknownCounts.push(count)
             }
         }
         let sumItems: number[] = []
         let sumCounts: number[] = []
-        for (let i = 0; i < items.length; i++) {
+        for (let i = 0; i < recItems.length; i++) {
             let found = -1
             for (let j = 0; j < sumItems.length; j++) {
-                if (sumItems[j] == items[i]) { found = j; break }
+                if (sumItems[j] == recItems[i]) { found = j; break }
             }
             if (found >= 0) {
-                sumCounts[found] += counts[i]
+                sumCounts[found] += recCounts[i]
             } else {
-                sumItems.push(items[i])
-                sumCounts.push(counts[i])
+                sumItems.push(recItems[i])
+                sumCounts.push(recCounts[i])
             }
         }
         let mergedItems: number[] = []
@@ -299,9 +302,26 @@ namespace ai {
                 }
             }
         }
-        // API가 인식한 슬롯만 초기화 — 인식 불가 아이템(심층암 등)은 보존
-        for (let i = 0; i < readableSlots.length; i++) { agent.setItem(AIR, 1, readableSlots[i]) }
-        for (let i = 0; i < mergedItems.length; i++) { agent.setItem(mergedItems[i], mergedCounts[i], readableSlots[i]) }
+        let N = mergedItems.length
+        // Phase A: 인식된 슬롯만 초기화
+        for (let i = 1; i <= 28; i++) {
+            if (agent.getItemDetail(i) != 0) { agent.setItem(AIR, 1, i) }
+        }
+        // Phase B: 미등록 아이템을 슬롯 N+1.. 으로 이동
+        // Pass 1 (왼쪽으로 이동, src > dst): 앞에서 뒤로
+        for (let i = 0; i < unknownSlots.length; i++) {
+            let src = unknownSlots[i]
+            let dst = N + 1 + i
+            if (src > dst) { agent.transfer(unknownCounts[i], src, dst) }
+        }
+        // Pass 2 (오른쪽으로 이동, src < dst): 뒤에서 앞으로
+        for (let i = unknownSlots.length - 1; i >= 0; i--) {
+            let src = unknownSlots[i]
+            let dst = N + 1 + i
+            if (src < dst) { agent.transfer(unknownCounts[i], src, dst) }
+        }
+        // Phase C: 인식된 아이템을 슬롯 1..N 에 배치
+        for (let i = 0; i < N; i++) { agent.setItem(mergedItems[i], mergedCounts[i], i + 1) }
     }
 
 }
