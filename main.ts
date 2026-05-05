@@ -125,9 +125,9 @@ namespace ai {
             } else if (direction == AgentDirection.Back) {
                 dx = -fx; dz = -fz
             } else if (direction == AgentDirection.Left) {
-                dx = -fz; dz = fx
-            } else {
                 dx = fz; dz = -fx
+            } else {
+                dx = -fz; dz = fx
             }
         }
         return positions.add(pos, positions.create(dx, dy, dz))
